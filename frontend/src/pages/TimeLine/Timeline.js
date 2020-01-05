@@ -2,16 +2,43 @@ import React, {Component} from 'react';
 import './Timeline.css';
 import twitterLogo from '../../twitter.svg'
 import axios from '../../services/api.js';
+import Tweet from '../../components/Tweet/Tweet.js'
+import SocketIO from  'socket.io-client'
 
 export default class TimeLine extends Component {
     state={
+        tweets: [],
         newTweet:''
+    }
+
+    async componentDidMount(){
+        this.subscribeToEvents()
+        const response = await axios.get('/tweets');
+        this.setState({
+            tweets: response.data
+        })
     }
 
     handleInputChange = (event) => {
         this.setState({
             newTweet: event.target.value
         })
+    }
+
+    subscribeToEvents = () => {
+        const io = SocketIO('http://loclahost:3000');
+        io.on('tweet', data => {
+            this.setState({
+                tweets:[ data, ...this.state.tweets]
+            })
+        });
+        io.on('like', data => {
+            this.setState({
+                tweets: this.state.tweets.map(tweet => 
+                    tweet._id === data._id ? data : tweet
+                )
+            })
+        });
     }
 
     handleNewTweet = async (event) => {
@@ -36,6 +63,13 @@ export default class TimeLine extends Component {
                         onKeyDown = {this.handleNewTweet}
                         placeholder="O Que está acontecendo ?"/>
                 </form>
+                <ul className="tweet-list">
+                    { 
+                        this.state.tweets.map(tweet => 
+                            <Tweet key={tweet._id} tweet={tweet} /> 
+                        )
+                    }
+                </ul>
             </div>
         );
     }
