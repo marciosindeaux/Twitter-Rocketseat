@@ -39,15 +39,15 @@ export default {
                 let content = this.newTweet;
                 axios.post("tweets",{ author, content })
                 .then(response => {
-                    
+                    this.newTweet = '';
                 });
-                this.newTweet = '';
+                
             }
         },
         subscribeToEvents(){
             const io = SocketIO("http://localhost:3000")
             io.on('tweet', data => {
-                this.tweets = this.tweets.concat(data)
+                this.tweets = [data].concat(this.tweets);
             });
             io.on('like', data => {
                 this.tweets = this.tweets.map(tweet => {

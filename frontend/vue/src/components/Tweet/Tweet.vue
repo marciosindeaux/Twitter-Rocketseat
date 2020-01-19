@@ -16,7 +16,10 @@ export default {
     },
     methods:{
         async handleLike(){
-            axios.post('likes/'+this.tweet._id);
+            axios.post('/likes/'+this.tweet._id)
+            .then(response => {
+              this.tweet.likes++;
+            })
         }
     }
 }

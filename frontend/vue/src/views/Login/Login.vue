@@ -1,5 +1,8 @@
 <template>
     <div class="login-wrapper">
+        <br><br>
+        <br><br>
+        <br><br>
         <img src="../../assets/twitter.svg" alt="GoTwitter">
         <form @submit.prevent="handleSubmit" action="">
             <input v-model="username" type="text" placeholder="Nome do Usuario">
